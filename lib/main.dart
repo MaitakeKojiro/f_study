@@ -1,70 +1,47 @@
-import 'package:example/second_route.dart';
+import 'package:example/main_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
+// StatelessWidgetは状態を持たない
+// ビルドしたときの値から変えられない。
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      home: ChangeNotifierProvider<MainModel>(
+        create: (_) => MainModel(),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("セカンドルート"),
+          ),
+          // Consumerで囲んだ部分だけ、再描画される
+          body: Consumer<MainModel>(builder: (context, model, child) {
+            return Center(
+              child: Column(
+                children: [
+                  Text(
+                    model.maiText,
+                    style: TextStyle(
+                      fontSize: 30,
+                    ),
+                  ),
+                  TextButton(
+                    // ボタンを押したときに変数maiTextの値を変える
+                    onPressed: () {
+                      //todo ここで何か
+                      model.changeMaiText();
+                    },
+                    child: Text('ボタン'),
+                  )
+                ],
+              ),
+            );
+          }),
+        ),
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  // リストのためのデータソース取得
-  final items = List<String>.generate(10000, (i) => "Item $i");
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Container(
-          width: double.infinity,
-          child: ListView(
-            // scrollDirection: Axis.horizontal, // 横にスクロールするための設定 縦の場合：Axis.vertical
-            children: <Widget>[
-              Container(
-                width: 160.0,
-                color: Colors.red,
-              ),
-              Container(
-                width: 160.0,
-                color: Colors.blue,
-              ),
-              Container(
-                width: 160.0,
-                color: Colors.green,
-              ),
-              Container(
-                width: 160.0,
-                color: Colors.yellow,
-              ),
-              Container(
-                width: 160.0,
-                color: Colors.orange,
-              ),
-            ],
-          )),
     );
   }
 }
