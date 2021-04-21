@@ -1,6 +1,6 @@
 // modelからFirestoreのデータを取得する
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:example/book.dart';
+import 'package:example/domain/book.dart';
 import 'package:flutter/material.dart';
 
 // Firestoreからデータを取得するモデル（ドメインモデル、ロジック）
@@ -15,5 +15,6 @@ class BookListModel extends ChangeNotifier {
     // titleドキュメントを取得、要素をbook型に変換してリストに格納
     final books = docs.docs.map((doc) => Book(doc['title'])).toList();  // map関数でdoc型をBook型に変換
     this.books = books;
+    print(books[0].title);
   }
 }
