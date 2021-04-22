@@ -1,30 +1,44 @@
-import 'file:///C:/Users/simple/AndroidStudioProjects/example/lib/book_list/book_list_model.dart';
 import 'package:example/add_book/add_book_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'book_list_model.dart';
+
 class BookListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      // ..はカスケード演算子。同じオブジェクトに対して複数の処理を行うときに使う。BookListModelをcreate引数に指定して、fetchBooks()メソッドも同時に行う
+    return ChangeNotifierProvider<BookListModel>(
       create: (_) => BookListModel()..fetchBooks(),
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           title: Text('本一覧'),
         ),
-        body: Consumer<BookListModel>(builder: (context, model, child) {
-          // modelから、
-          final books = model.books;
-          // Bookを格納したリストをListTileに変換。 なぜかリロードしないと取得出来ない。
-          final listTiles =
-              books.map((book) => ListTile(title: Text(book.title))).toList();
-          // ListTileを表示
-          return ListView(
-            children: listTiles,
-          );
-        }),
+        body: Consumer<BookListModel>(
+          builder: (context, model, child) {
+            final books = model.books;
+            final listTiles = books
+                .map((book) => ListTile(
+                    title: Text(book.title),
+                    trailing: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed:
+                          // 画面遷移
+                          () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddBookPage(book: book),
+                            fullscreenDialog: true,
+                          ),
+                        );
+                      },
+                    )))
+                .toList();
+            return ListView(
+              children: listTiles,
+            );
+          },
+        ),
         floatingActionButton:
             Consumer<BookListModel>(builder: (context, model, child) {
           return FloatingActionButton(
@@ -33,9 +47,11 @@ class BookListPage extends StatelessWidget {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AddBookPage(),
-                    fullscreenDialog: true),
+                  builder: (context) => AddBookPage(),
+                  fullscreenDialog: true,
+                ),
               );
+              model.fetchBooks();
             },
           );
         }),

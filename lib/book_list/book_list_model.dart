@@ -13,8 +13,7 @@ class BookListModel extends ChangeNotifier {
     // Firestoreからbooksコレクションを取得
     final docs = await FirebaseFirestore.instance.collection('books').get();
     // titleドキュメントを取得、要素をbook型に変換してリストに格納
-    final books = docs.docs.map((doc) => Book(doc['title'])).toList();  // map関数でdoc型をBook型に変換
+    final books = docs.docs.map((doc) => Book(doc)).toList();  // map関数でdoc型をBook型に変換
     this.books = books;
-    print(books[0].title);
   }
 }
