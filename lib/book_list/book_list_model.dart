@@ -8,12 +8,22 @@ import 'package:flutter/material.dart';
 // ChangeNotifierProviderに変数の変更があったときに通知できる仕組み（これにより、StatefulWidgetを使わずに済む）
 class BookListModel extends ChangeNotifier {
   List<Book> books = [];
+
   /*Firestoreのメソッドを呼んでbooks変数に値を挿入*/
   Future fetchBooks() async {
     // Firestoreからbooksコレクションを取得
     final docs = await FirebaseFirestore.instance.collection('books').get();
     // titleドキュメントを取得、要素をbook型に変換してリストに格納
-    final books = docs.docs.map((doc) => Book(doc)).toList();  // map関数でdoc型をBook型に変換
+    final books =
+        docs.docs.map((doc) => Book(doc)).toList(); // map関数でdoc型をBook型に変換
     this.books = books;
+  }
+
+  // 削除
+  Future deleteBook(Book book) async {
+    await FirebaseFirestore.instance
+        .collection('books')
+        .doc(book.documentID)
+        .delete();
   }
 }
