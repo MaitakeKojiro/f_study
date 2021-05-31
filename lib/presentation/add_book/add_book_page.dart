@@ -1,5 +1,5 @@
-import 'package:example/add_book/add_book_model.dart';
 import 'package:example/domain/book.dart';
+import 'package:example/presentation/add_book/add_book_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,8 +13,7 @@ class AddBookPage extends StatelessWidget {
 
     // 比較演算子で入れてtrue/falseを代入
     final bool isUpdate = book != null;
-    final textEditingController =
-        TextEditingController(); // テキストフィールドの内容を改変するクラス
+    final textEditingController = TextEditingController(); // テキストフィールドの内容を改変するクラス
 
 
     if (isUpdate) {
