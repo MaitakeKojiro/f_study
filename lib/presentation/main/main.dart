@@ -35,6 +35,15 @@ class MyApp extends StatelessWidget {
                     ),
                   ),
                   TextButton(
+                    child: Text('本一覧'),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BookListPage()),
+                      );
+                    },
+                  ),
+                  TextButton(
                     child: Text('新規登録'),
                     onPressed: () {
                       Navigator.push(

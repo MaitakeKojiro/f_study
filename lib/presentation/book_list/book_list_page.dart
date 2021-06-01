@@ -20,6 +20,7 @@ class BookListPage extends StatelessWidget {
             final listTiles = books
                 .map(
                   (book) => ListTile(
+                    leading: Image.network(book.imageURL != null ?book.imageURL:'https://i.gzn.jp/img/2018/01/15/google-gorilla-ban/00.jpg'),
                     title: Text(book.title),
                     trailing: IconButton(
                       icon: Icon(Icons.edit),

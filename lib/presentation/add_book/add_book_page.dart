@@ -10,11 +10,10 @@ class AddBookPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // 比較演算子で入れてtrue/falseを代入
     final bool isUpdate = book != null;
-    final textEditingController = TextEditingController(); // テキストフィールドの内容を改変するクラス
-
+    final textEditingController =
+        TextEditingController(); // テキストフィールドの内容を改変するクラス
 
     if (isUpdate) {
       textEditingController.text = book.title;
@@ -22,35 +21,70 @@ class AddBookPage extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (_) => AddBookModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          // 三項演算子でタイトルを変える nullの場合はfalseなので、本を追加になる
-          title: Text(isUpdate ? '本を編集' : '本を追加'),
-        ),
-        body: Consumer<AddBookModel>(builder: (context, model, child) {
-          return Column(
-            children: <Widget>[
-              TextField(
-                onChanged: (text) {
-                  model.bookTitle = text;
-                },
-                controller: textEditingController,
-              ),
-              ElevatedButton(
-                  child: Text(isUpdate ? '更新する' : '追加'),
-                  onPressed: () async {
-                    if (isUpdate) {
-                      // firestoreの本を更新
-                      await updateBook(context, model);
-                    } else {
-                      // firestoreに本を追加
-                      await addBook(context, model);
-                    }
-                  })
-            ],
-          );
-        }),
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              // 三項演算子でタイトルを変える nullの場合はfalseなので、本を追加になる
+              title: Text(isUpdate ? '本を編集' : '本を追加'),
+            ),
+            body: Consumer<AddBookModel>(builder: (context, model, child) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 100,
+                      height: 160,
+                      child: InkWell(
+                        onTap: () async {
+                          // TODO: カメラロールを開く
+                          await model.showImagePicker();
+                        },
+                        child: model.imageFile != null
+                            ? Image.file(model.imageFile)
+                            : Container(
+                                color: Colors.grey,
+                              ),
+                      ),
+                    ),
+                    TextField(
+                      onChanged: (text) {
+                        model.bookTitle = text;
+                      },
+                      controller: textEditingController,
+                    ),
+                    ElevatedButton(
+                        child: Text(isUpdate ? '更新する' : '追加'),
+                        onPressed: () async {
+                          model.startLoading();
+                          if (isUpdate) {
+                            // firestoreの本を更新
+                            await updateBook(context, model);
+                          } else {
+                            // firestoreに本を追加
+                            await addBook(context, model);
+                          }
+                          model.endLoading();
+                        },
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+          Consumer<AddBookModel>(builder: (context, model, child) {
+            return model.isLoading
+                ? Container(
+                    color: Colors.grey.withOpacity(0.7),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : SizedBox();
+          }),
+        ],
       ),
     );
   }
